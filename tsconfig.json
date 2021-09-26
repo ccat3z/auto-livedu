@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "noEmitOnError": true,
+        "removeComments": false,
+        "target": "ES6",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "module": "es6",
+        "types": [
+            "tampermonkey"
+        ],
+        "typeRoots": [
+            "./types",
+            "./node_modules/@types",
+            "./typings.d.ts"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "./src/"
+    ]
+}
