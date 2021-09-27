@@ -1,6 +1,6 @@
 {
     "include": [
-        "https://www.livedu.com.cn/ispace4.0/moocxsxx/*"
+        "https://www.livedu.com.cn/ispace4.0/moocxsxx/queryAllZjByKcdm.do"
     ],
     "run-at": "document-start"
 }
