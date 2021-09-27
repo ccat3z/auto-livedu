@@ -1,37 +1,33 @@
-export function ready (callback: () => any) {
-  // in case the document is already rendered
-  if (document.readyState !== 'loading') callback()
-  // modern browsers
-  else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback)
+type Chapter = {
+  num: string,
+  title: string,
+  zjdm: string
 }
 
-export function delay (interval: number) {
-  return new Promise((resolve) => setTimeout(resolve, interval))
+type Video = {
+  url: string
 }
 
-export const retry = async <TReturn>(fn: () => Promise<TReturn> | TReturn, retry: number = 5, interval = 1000): Promise<TReturn> => {
-  while (true) {
-    try {
-      return await fn()
-    } catch (e: any) {
-      if (--retry === 0) {
-        throw e
-      } else {
-        console.warn((e.message ?? e) + '. Retring...')
-        await delay(interval)
-      }
-    }
-  }
+export function findAllChapters(): Chapter[] {
+  return Array.from(document.querySelectorAll('div.xx-icon-text')).map(s => ({
+    num: s.querySelector('em').innerText,
+    title: s.querySelector('a').innerText,
+    zjdm: s.querySelector('a').getAttribute('onclick').replace(/xsxx\('([0-9A-Z]*)'\);/, '$1')
+  }))
 }
 
-export async function getElement<TElement extends Element> (selector: string) {
-  const element = document.querySelector<TElement>(selector)
-  if (element !== null && element !== undefined) {
-    return element
-  }
-  throw new Error(`Cannot query ${selector}`)
+export function getKcdm() {
+  return document.querySelector<HTMLInputElement>('input#kcdm').value
 }
 
-export function exportGlobal(name: string, o: any) {
-  (unsafeWindow as any)[name] = o
+export async function findVideosOfChapter(chapter: Chapter): Promise<Video[]> {
+  let kcdm = getKcdm()
+  let resp = await (await fetch(`https://www.livedu.com.cn/ispace4.0/moocxsxx/queryAllZjByKcdmIfram?kcdm=${kcdm}&bjdm=${kcdm}&zjdm=${chapter.zjdm}`)).text()
+  let parser = new DOMParser()
+  let doc = parser.parseFromString(resp, 'text/html')
+
+  return Array.from(doc.querySelectorAll('video'))
+    .map(video => video.querySelector('source').getAttribute('src'))
+    .filter(Boolean)
+    .map(url => ({ url }))
 }
