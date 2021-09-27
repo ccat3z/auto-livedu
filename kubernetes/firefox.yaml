@@ -27,7 +27,7 @@ spec:
             cpu: 2000m
             memory: 1000Mi
         volumeMounts:
-        - mountPath: /home/kasm_user
+        - mountPath: /home/kasm-user
           name: home
       volumes:
       - name: home
