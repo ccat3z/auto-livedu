@@ -1,0 +1,65 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: &labels
+    app.kubernetes.io/name: firefox-livedu
+  name: firefox-livedu
+spec:
+  selector:
+    matchLabels: *labels
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      containers:
+      - env:
+        - name: VNC_PW
+          value: password2
+        image: kasmweb/firefox:1.9.0
+        name: firefox
+        ports:
+        - containerPort: 6901
+          protocol: TCP
+          name: novnc
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 1000Mi
+        volumeMounts:
+        - mountPath: /home/kasm_user
+          name: home
+      volumes:
+      - name: home
+        persistentVolumeClaim:
+          claimName: firefox-livedu-profile
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/name: firefox-livedu
+  name: firefox-livedu-profile
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1G
+  storageClassName: local-path
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: &labels
+    app.kubernetes.io/name: firefox-livedu
+  name: firefox-livedu
+spec:
+  ports:
+  - port: 6901
+    protocol: TCP
+    targetPort: novnc
+  selector: *labels
+  type: ClusterIP
