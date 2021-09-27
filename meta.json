@@ -1,5 +1,8 @@
 {
     "include": [
         "https://www.livedu.com.cn/ispace4.0/moocxsxx/queryAllZjByKcdm.do"
+    ],
+    "grant": [
+        "unsafeWindow"
     ]
 }
